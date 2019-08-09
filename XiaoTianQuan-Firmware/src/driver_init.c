@@ -426,7 +426,7 @@ void system_init()
 	    // <PORT_ISC_FALLING_gc"> Sense Falling Edge
 	    // <PORT_ISC_INPUT_DISABLE_gc"> Digital Input Buffer disabled
 	    // <PORT_ISC_LEVEL_gc"> Sense low Level
-	    PORT_ISC_FALLING_gc);
+	    PORT_ISC_BOTHEDGES_gc);
 
 	CLKCTRL_init();
 

@@ -66,15 +66,43 @@ int8_t TIMER_0_init()
 	// TCA0.SINGLE.EVCTRL = 0 << TCA_SINGLE_CNTEI_bp /* Count on Event Input: disabled */
 	//		 | TCA_SINGLE_EVACT_POSEDGE_gc; /* Count on positive edge event */
 
-	// TCA0.SINGLE.INTCTRL = 0 << TCA_SINGLE_CMP0_bp /* Compare 0 Interrupt: disabled */
+	 TCA0.SINGLE.INTCTRL = 1 << TCA_SINGLE_CMP0_bp; /* Compare 0 Interrupt: enabled */
 	//		 | 0 << TCA_SINGLE_CMP1_bp /* Compare 1 Interrupt: disabled */
 	//		 | 0 << TCA_SINGLE_CMP2_bp /* Compare 2 Interrupt: disabled */
 	//		 | 0 << TCA_SINGLE_OVF_bp; /* Overflow Interrupt: disabled */
 
-	// TCA0.SINGLE.PER = 0xffff; /* Period: 0xffff */
 
 	TCA0.SINGLE.CTRLA = TCA_SINGLE_CLKSEL_DIV1024_gc /* System Clock / 1024 */
 	                    | 0 << TCA_SINGLE_ENABLE_bp; /* Module Enable: disabled */
 
 	return 0;
+}
+
+void TIMER_0_start()
+{
+    TCA0.SINGLE.CTRLA |= 1 << TCA_SINGLE_ENABLE_bp;
+}
+
+void TIMER_0_stop()
+{
+    TCA0.SINGLE.CTRLA &= ~(1 << TCA_SINGLE_ENABLE_bp);
+}
+
+void TIMER_0_set_timeout(uint16_t timeout)
+{
+	TCA0.SINGLE.CMP0 = timeout;
+}
+
+void (*timeout_cb)() = NULL;
+
+void TIMER_0_set_timeout_callback(void (*cb)())
+{
+    timeout_cb = cb;
+}
+
+ISR(TCA0_CMP0_vect)
+{
+    if (timeout_cb) {
+        timeout_cb();
+    }
 }

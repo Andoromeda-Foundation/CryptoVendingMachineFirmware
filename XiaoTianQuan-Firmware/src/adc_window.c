@@ -264,7 +264,7 @@ void ADC_0_register_window_callback(adc_irq_cb_t f)
 
 ISR(ADC0_WCOMP_vect)
 {
-
+    return;
 	if (ADC_0_window_cb != NULL) {
 		ADC_0_window_cb();
 	}

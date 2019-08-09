@@ -16,25 +16,25 @@ typedef void (*motor_event_callback_t)(MotorEvent);
 
 static motor_event_callback_t motor_event_callback;
 
-static void setup_motor_timer_interrupt()
-{
-	//TCCR1A = _BV(COM1A0);	// Enable OC1A/OC1B Compare Match and disable others
-	//// Timeout 10s, prescalar 1024
-	//// Ttick = 1s / (8Mhz * 1s) * 1024 = 1us * 1024 = 128us
-    //// 128us * 60000 = 7.68s
-	//OCR1A = 60000;
-	//TIMSK |= _BV(OCIE1A);
-}
-
 static void setup_motor_feedback_interrupt()
 {
 	MFB_set_isc(PORT_ISC_BOTHEDGES_gc);
 }
 
+void motor_timeout()
+{
+    MotorStatusMapping[MotorRunning] = MOTOR_TIMEOUT;
+    disable_motor();
+    if (motor_event_callback) {
+        motor_event_callback(MOTOR_EVENT_COMPLETE_TIMEOUT);
+    }
+}
+
+
 void setup_motor_interrupt()
 {
 	setup_motor_feedback_interrupt();
-	setup_motor_timer_interrupt();
+    TIMER_0_set_timeout_callback(motor_timeout);
 }
 
 void init_motor_controller()
@@ -44,20 +44,17 @@ void init_motor_controller()
 
 static void start_motor_timer()
 {
-    //TIMER_0_init();
-    //TIMER_0_start();
-	//TCNT1 = 0;
-	//TCCR1B |= _BV(CS12) | _BV(CS10);	// clk prescalar 1024
+    TIMER_0_start();
 }
 
 static void stop_motor_timer()
 {
-	//TCCR1B &= ~((1 << CS12) | (1 << CS11) | (1 << CS10));
+    TIMER_0_stop();
 }
 
 void enable_motor(MotorId motorId)
 {
-    printf("enabling motor %d...\n", motorId);
+    printf("enabling motor %d...\r\n", motorId);
 	disable_motor();
 	
 	MotorRunning = motorId;
@@ -76,18 +73,18 @@ void enable_motor(MotorId motorId)
     
 	motor_feedback_enabled = 1;
 	start_motor_timer();
-    printf("motor enabled\n");
+    printf("motor enabled\r\n");
 }
 
 void disable_motor()
 {
-    printf("disabling motor...\n");
+    printf("disabling motor...\r\n");
 	MCTR1_set_level(false);
 	MCTR2_set_level(false);
 	MCTR3_set_level(false);
 	motor_feedback_enabled = 0;
 	stop_motor_timer();
-    printf("motor disabled\n");
+    printf("motor disabled\r\n");
 }
 
 static volatile int waiting_for_falling_edge;
@@ -113,11 +110,3 @@ void process_port_mfb_interrupt()
 	}
 }
 
-//ISR(TIM1_COMPA_vect)	// motor timeout
-//{
-	//MotorStatusMapping[MotorRunning] = MOTOR_TIMEOUT;
-	//disable_motor();
-	//if (motor_event_callback) {
-		//motor_event_callback(MOTOR_EVENT_COMPLETE_TIMEOUT);
-	//}
-//}

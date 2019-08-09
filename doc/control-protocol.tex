@@ -1,0 +1,106 @@
+\documentclass[a4paper,11pt]{article}
+
+    %Use system fonts, only apply to XeTeX
+    \usepackage{fontspec}
+    \usepackage{xeCJK}
+    \setmainfont[Ligatures={TeX}]{Minion Pro}
+    \setsansfont[Ligatures={TeX}]{Myriad Pro}
+    \setmonofont[Ligatures={TeX}]{Consolas}
+
+    \setCJKmainfont[BoldFont=Adobe Heiti Std,ItalicFont=Adobe Kaiti Std,Ligatures={TeX}]{Adobe Song Std}
+    \setCJKfamilyfont{kaiti}[Ligatures={TeX}]{Adobe Kaiti Std}
+    \setCJKfamilyfont{sf}[Ligatures={TeX}]{Adobe Heiti Std}
+    \setCJKfamilyfont{it}[Ligatures={TeX}]{Adobe Kaiti Std}
+    \setCJKfamilyfont{tt}[Ligatures={TeX}]{Adobe Kaiti Std}
+
+    \usepackage{unicode-math}
+    \unimathsetup{math-style=TeX}
+    \setmathfont{XITS Math}
+
+    %Adjust margin of document
+    \usepackage{geometry}
+    \geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+
+    \setlength{\parskip}{12pt}
+    \setlength{\parindent}{0pt}
+
+    % Graphics with mpost
+    \usepackage{graphicx}
+    \DeclareGraphicsRule{*}{eps}{*}{}
+
+    % Hyperref in pdf
+    \usepackage[usenames,dvipsnames]{xcolor}
+    \usepackage{hyperref}
+    \hypersetup{breaklinks,colorlinks,linkcolor=RoyalBlue,citecolor=red,urlcolor=purple,pdfstartview=FitH,pdfauthor={坂本ポテコ},pdftitle={XiaoTianQuan Firmware Control Protocol}}
+
+    \usepackage{makecell}
+    \renewcommand\theadfont{\sffamily}
+
+    \usepackage{xspace}
+
+    \newcommand{\iic}{I\textsuperscript{2}C\xspace}
+
+\begin{document}
+
+    \makeatletter
+    \renewenvironment{table}
+        {\renewcommand\familydefault\sfdefault
+         \@float{table}}
+    {\end@float}
+    \makeatother
+
+
+\title{\Huge{XiaoTianQuan Firmware\\ \vspace{1.5em} Control Protocol}}
+\author{坂本ポテコ}
+\maketitle
+\clearpage
+
+\tableofcontents
+\clearpage
+
+
+{\Huge{Work In Progress.}}
+
+\section{Supported Transport Protocols}
+Currently only \iic protocol is supported. Serial is planned.
+
+\section{\iic Protocol}
+\subsection{Registers}
+
+\subsubsection{Product Release Control}
+
+Address: 0x10
+
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  \thead{Bit}   &   7   &   6   &   5   &   4   &   3   &   2   &   1   &   0   \\ 
+  \hline
+  \thead{description} & Slot 8& Slot 7& Slot6 & Slot 5& Slot 4& Slot 3& Slot 2& Slot 1 \\   
+  \hline
+  \thead{Access}& W     & W     & W     & W     & W     & W     & W     & W     \\
+  \hline
+\end{tabular}
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
