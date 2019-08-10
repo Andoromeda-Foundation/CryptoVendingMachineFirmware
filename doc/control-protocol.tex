@@ -29,26 +29,44 @@
     \DeclareGraphicsRule{*}{eps}{*}{}
 
     % Hyperref in pdf
-    \usepackage[usenames,dvipsnames]{xcolor}
+    \usepackage[usenames,dvipsnames,table]{xcolor}
     \usepackage{hyperref}
     \hypersetup{breaklinks,colorlinks,linkcolor=RoyalBlue,citecolor=red,urlcolor=purple,pdfstartview=FitH,pdfauthor={坂本ポテコ},pdftitle={XiaoTianQuan Firmware Control Protocol}}
 
     \usepackage{makecell}
-    \renewcommand\theadfont{\sffamily}
+    \renewcommand\theadfont{\bfseries}
 
     \usepackage{xspace}
+    
+    \usepackage{tabularx}
 
     \newcommand{\iic}{I\textsuperscript{2}C\xspace}
+    \newcommand{\tdes}{\thead{Description}}
+    \newcommand{\tacc}{\hline\thead{Access}}
+
+    \newcolumntype{Y}{>{\centering\arraybackslash}X}
+
+    \usepackage{environ}    
+    \NewEnviron{regdes}{
+        \sffamily\begin{tabularx}{\textwidth}{|c|Y|Y|Y|Y|Y|Y|Y|Y|}
+            \hline
+            \thead{Bit}   &   7   &   6   &   5   &   4   &   3   &   2   &   1   &   0   \\
+            \hline
+            \BODY
+            \hline
+        \end{tabularx}
+    }
+
+    \newenvironment{field}[1]
+    {
+        \par\vspace{\baselineskip}
+        \textbf{\textsf{\large #1}}
+        \par
+    }{}
+
+    %\newcommand{\fields}{\vspace{2em}\textsf{\textbf{\Large Fields}}} 
 
 \begin{document}
-
-    \makeatletter
-    \renewenvironment{table}
-        {\renewcommand\familydefault\sfdefault
-         \@float{table}}
-    {\end@float}
-    \makeatother
-
 
 \title{\Huge{XiaoTianQuan Firmware\\ \vspace{1.5em} Control Protocol}}
 \author{坂本ポテコ}
@@ -67,21 +85,39 @@ Currently only \iic protocol is supported. Serial is planned.
 \section{\iic Protocol}
 \subsection{Registers}
 
-\subsubsection{Product Release Control}
+\subsubsection{Product Release Control RC0-RC9}
 
 Address: 0x10
 
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
-  \hline
-  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-  \thead{Bit}   &   7   &   6   &   5   &   4   &   3   &   2   &   1   &   0   \\ 
-  \hline
-  \thead{description} & Slot 8& Slot 7& Slot6 & Slot 5& Slot 4& Slot 3& Slot 2& Slot 1 \\   
-  \hline
-  \thead{Access}& W     & W     & W     & W     & W     & W     & W     & W     \\
-  \hline
-\end{tabular}
+\begin{regdes}
+\tdes & S8 & S7 & S6 & S5 & S4 & S3 & S2 & S1 \\
+\tacc & W  & W  & W  & W  & W  & W  & W  & W  \\
+\end{regdes}
 
+\begin{field}{S1-8}
+    Write 1 to start releasing product in slot. If there's multiple bits set, the least significant 1 bit will be used.
+\end{field}
+
+\subsubsection{Product Release Status PRS0-RS9}
+
+\begin{regdes}
+\tdes & S8 & S7 & S6 & S5 & S4 & S3 & S2 & S1 \\
+\tacc & R/W& R/W& R/W& R/W& R/W& R/W& R/W& R/W \\
+\end{regdes}
+
+\begin{field}{S1-S8}
+    When read, 1 indicates last release was successful, 0 indicates there's no release or release failed. Write 1 to clear the bit.
+\end{field}
+
+\subsubsection{Product Release Error RE}
+
+\begin{regdes}
+\tdes & S8 & S7 & S6 & S5 & S4 & S3 & S2 & S1 \\
+\tacc & R/W& R/W& R/W& R/W& R/W& R/W& R/W& R/W \\
+\end{regdes}
+
+
+\subsubsection{Power Control}
 
 
 

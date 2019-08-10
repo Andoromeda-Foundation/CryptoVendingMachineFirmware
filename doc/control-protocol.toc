@@ -1,4 +1,0 @@
-\contentsline {section}{\numberline {1}Supported Transport Protocols}{3}{section.1}
-\contentsline {section}{\numberline {2}I\textsuperscript {2}C\xspace Protocol}{3}{section.2}
-\contentsline {subsection}{\numberline {2.1}Registers}{3}{subsection.2.1}
-\contentsline {subsubsection}{\numberline {2.1.1}Product Release Control}{3}{subsubsection.2.1.1}
