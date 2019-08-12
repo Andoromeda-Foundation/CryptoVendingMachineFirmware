@@ -1,7 +1,7 @@
 /**
  * \file
  *
- * \brief ADC window driver example.
+ * \brief ADC basic driver example.
  *
  (c) 2018 Microchip Technology Inc. and its subsidiaries.
 
@@ -25,9 +25,9 @@
  *
  */
 
-#ifndef ADC_WINDOW_EXAMPLE_H
-#define ADC_WINDOW_EXAMPLE_H
+#ifndef ADC_BASIC_EXAMPLE_H
+#define ADC_BASIC_EXAMPLE_H
 
-uint8_t ADC_0_test_adc_window(void);
+uint8_t BATTERY_ADC_test_adc_basic(void);
 
-#endif /* ADC_WINDOW_EXAMPLE_H */
+#endif /* ADC_BASIC_EXAMPLE_H */

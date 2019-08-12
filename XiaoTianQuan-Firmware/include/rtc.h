@@ -35,7 +35,7 @@
 extern "C" {
 #endif
 
-int8_t RTC_0_init();
+int8_t RTC_1_init();
 
 #ifdef __cplusplus
 }

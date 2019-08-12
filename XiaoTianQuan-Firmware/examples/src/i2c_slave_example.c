@@ -29,57 +29,57 @@
 #include <i2c_slave_example.h>
 #include <atomic.h>
 
-volatile uint8_t I2C_0_slave_address;
-volatile uint8_t I2C_0_register_address;
-volatile uint8_t I2C_0_num_addresses;
-volatile uint8_t I2C_0_num_reads;
-volatile uint8_t I2C_0_num_writes;
-volatile uint8_t I2C_0_num_stops;
+volatile uint8_t I2C_SLAVE_slave_address;
+volatile uint8_t I2C_SLAVE_register_address;
+volatile uint8_t I2C_SLAVE_num_addresses;
+volatile uint8_t I2C_SLAVE_num_reads;
+volatile uint8_t I2C_SLAVE_num_writes;
+volatile uint8_t I2C_SLAVE_num_stops;
 
-void I2C_0_address_handler()
+void I2C_SLAVE_address_handler()
 {
-	I2C_0_slave_address = I2C_0_read();
-	I2C_0_send_ack(); // or send_nack() if we don't want to ack the address
-	I2C_0_num_addresses++;
+	I2C_SLAVE_slave_address = I2C_SLAVE_read();
+	I2C_SLAVE_send_ack(); // or send_nack() if we don't want to ack the address
+	I2C_SLAVE_num_addresses++;
 }
 
-void I2C_0_read_handler()
+void I2C_SLAVE_read_handler()
 { // Master read operation
-	I2C_0_write(0x0c);
-	I2C_0_num_reads++;
+	I2C_SLAVE_write(0x0c);
+	I2C_SLAVE_num_reads++;
 }
 
-void I2C_0_write_handler()
+void I2C_SLAVE_write_handler()
 { // Master write handler
-	I2C_0_register_address = I2C_0_read();
-	I2C_0_send_ack(); // or send_nack() if we don't want to receive more data
-	I2C_0_num_writes++;
+	I2C_SLAVE_register_address = I2C_SLAVE_read();
+	I2C_SLAVE_send_ack(); // or send_nack() if we don't want to receive more data
+	I2C_SLAVE_num_writes++;
 }
 
-void I2C_0_stop_handler()
+void I2C_SLAVE_stop_handler()
 {
-	I2C_0_num_stops++;
+	I2C_SLAVE_num_stops++;
 }
 
-void I2C_0_error_handler()
+void I2C_SLAVE_error_handler()
 {
 	while (1)
 		;
 }
 
-uint8_t I2C_0_test_i2c_slave(void)
+uint8_t I2C_SLAVE_test_i2c_slave(void)
 {
 
-	I2C_0_set_read_callback(I2C_0_read_handler);
-	I2C_0_set_write_callback(I2C_0_write_handler);
-	I2C_0_set_address_callback(I2C_0_address_handler);
-	I2C_0_set_stop_callback(I2C_0_stop_handler);
-	I2C_0_set_collision_callback(I2C_0_error_handler);
-	I2C_0_set_bus_error_callback(I2C_0_error_handler);
-	I2C_0_open();
+	I2C_SLAVE_set_read_callback(I2C_SLAVE_read_handler);
+	I2C_SLAVE_set_write_callback(I2C_SLAVE_write_handler);
+	I2C_SLAVE_set_address_callback(I2C_SLAVE_address_handler);
+	I2C_SLAVE_set_stop_callback(I2C_SLAVE_stop_handler);
+	I2C_SLAVE_set_collision_callback(I2C_SLAVE_error_handler);
+	I2C_SLAVE_set_bus_error_callback(I2C_SLAVE_error_handler);
+	I2C_SLAVE_open();
 
 	// Receive 10 transmissions from master before exiting
-	while (I2C_0_num_addresses < 10)
+	while (I2C_SLAVE_num_addresses < 10)
 		;
 
 	return 1;

@@ -53,28 +53,28 @@
 #define Slave_Not_Ack ((TWSR0 & 0xF8) == 0xC0)   // Data Byte has been transmitted and NOT ACK has been received
 
 // Read Event Interrupt Handlers
-void I2C_0_read_callback(void);
-void (*I2C_0_read_interrupt_handler)(void);
+void I2C_SLAVE_read_callback(void);
+void (*I2C_SLAVE_read_interrupt_handler)(void);
 
 // Write Event Interrupt Handlers
-void I2C_0_write_callback(void);
-void (*I2C_0_write_interrupt_handler)(void);
+void I2C_SLAVE_write_callback(void);
+void (*I2C_SLAVE_write_interrupt_handler)(void);
 
 // Address Event Interrupt Handlers
-void I2C_0_address_callback(void);
-void (*I2C_0_address_interrupt_handler)(void);
+void I2C_SLAVE_address_callback(void);
+void (*I2C_SLAVE_address_interrupt_handler)(void);
 
 // Stop Event Interrupt Handlers
-void I2C_0_stop_callback(void);
-void (*I2C_0_stop_interrupt_handler)(void);
+void I2C_SLAVE_stop_callback(void);
+void (*I2C_SLAVE_stop_interrupt_handler)(void);
 
 // Bus Collision Event Interrupt Handlers
-void I2C_0_collision_callback(void);
-void (*I2C_0_collision_interrupt_handler)(void);
+void I2C_SLAVE_collision_callback(void);
+void (*I2C_SLAVE_collision_interrupt_handler)(void);
 
 // Bus Error Event Interrupt Handlers
-void I2C_0_bus_error_callback(void);
-void (*I2C_0_bus_error_interrupt_handler)(void);
+void I2C_SLAVE_bus_error_callback(void);
+void (*I2C_SLAVE_bus_error_interrupt_handler)(void);
 
 /**
  * \brief Initialize I2C interface
@@ -83,7 +83,7 @@ void (*I2C_0_bus_error_interrupt_handler)(void);
  *
  * \return Nothing
  */
-void I2C_0_init()
+void I2C_SLAVE_init()
 {
 
 	// TWI0.CTRLA = 0 << TWI_FMPEN_bp /* FM Plus Enable: disabled */
@@ -92,7 +92,7 @@ void I2C_0_init()
 
 	// TWI0.DBGCTRL = 0 << TWI_DBGRUN_bp; /* Debug Run: disabled */
 
-	TWI0.SADDR = 0x48 << TWI_ADDRMASK_gp /* Slave Address: 0x48 */
+	TWI0.SADDR = 0x77 << TWI_ADDRMASK_gp /* Slave Address: 0x77 */
 	             | 0 << TWI_ADDREN_bp;   /* General Call Recognition Enable: disabled */
 
 	// TWI0.SADDRMASK = 0 << TWI_ADDREN_bp /* Address Mask Enable: disabled */
@@ -105,12 +105,12 @@ void I2C_0_init()
 	              | 0 << TWI_PMEN_bp   /* Promiscuous Mode Enable: disabled */
 	              | 0 << TWI_SMEN_bp;  /* Smart Mode Enable: disabled */
 
-	I2C_0_set_write_callback(NULL);
-	I2C_0_set_read_callback(NULL);
-	I2C_0_set_address_callback(NULL);
-	I2C_0_set_stop_callback(NULL);
-	I2C_0_set_collision_callback(NULL);
-	I2C_0_set_bus_error_callback(NULL);
+	I2C_SLAVE_set_write_callback(NULL);
+	I2C_SLAVE_set_read_callback(NULL);
+	I2C_SLAVE_set_address_callback(NULL);
+	I2C_SLAVE_set_stop_callback(NULL);
+	I2C_SLAVE_set_collision_callback(NULL);
+	I2C_SLAVE_set_bus_error_callback(NULL);
 }
 
 /**
@@ -118,7 +118,7 @@ void I2C_0_init()
  *
  * \return Nothing
  */
-void I2C_0_open(void)
+void I2C_SLAVE_open(void)
 {
 	TWI0.SCTRLA |= TWI_ENABLE_bm;
 }
@@ -128,7 +128,7 @@ void I2C_0_open(void)
  *
  * \return Nothing
  */
-void I2C_0_close(void)
+void I2C_SLAVE_close(void)
 {
 	TWI0.SCTRLA &= ~TWI_ENABLE_bm;
 }
@@ -139,22 +139,22 @@ void I2C_0_close(void)
  *
  * \return Nothing
  */
-void I2C_0_isr()
+void I2C_SLAVE_isr()
 {
 	static char isFirstByte = true; // to bypass the NACK flag for the first byte in a transaction
 
 	if (TWI0.SSTATUS & TWI_COLL_bm) {
-		I2C_0_collision_callback();
+		I2C_SLAVE_collision_callback();
 		return;
 	}
 
 	if (TWI0.SSTATUS & TWI_BUSERR_bm) {
-		I2C_0_bus_error_callback();
+		I2C_SLAVE_bus_error_callback();
 		return;
 	}
 
 	if ((TWI0.SSTATUS & TWI_APIF_bm) && (TWI0.SSTATUS & TWI_AP_bm)) {
-		I2C_0_address_callback();
+		I2C_SLAVE_address_callback();
 		isFirstByte = true;
 		return;
 	}
@@ -165,22 +165,22 @@ void I2C_0_isr()
 			if (!(TWI0.SSTATUS & TWI_RXACK_bm) || isFirstByte) {
 				// Received ACK from master or First byte of transaction
 				isFirstByte = false;
-				I2C_0_read_callback();
+				I2C_SLAVE_read_callback();
 				TWI0.SCTRLB = TWI_ACKACT_ACK_gc | TWI_SCMD_RESPONSE_gc;
 			} else {
 				// Received NACK from master
-				I2C_0_goto_unaddressed();
+				I2C_SLAVE_goto_unaddressed();
 			}
 		} else // Master wishes to write to slave
 		{
-			I2C_0_write_callback();
+			I2C_SLAVE_write_callback();
 		}
 		return;
 	}
 
 	// Check if STOP was received
 	if ((TWI0.SSTATUS & TWI_APIF_bm) && (!(TWI0.SSTATUS & TWI_AP_bm))) {
-		I2C_0_stop_callback();
+		I2C_SLAVE_stop_callback();
 		TWI0.SCTRLB = TWI_SCMD_COMPTRANS_gc;
 		return;
 	}
@@ -188,24 +188,24 @@ void I2C_0_isr()
 
 ISR(TWI0_TWIS_vect)
 {
-	I2C_0_isr();
+	I2C_SLAVE_isr();
 }
 
 /**
- * \brief Read one byte from the data register of I2C_0
+ * \brief Read one byte from the data register of I2C_SLAVE
  *
  * Function will not block if a character is not available, so should
  * only be called when data is available.
  *
- * \return Data read from the I2C_0 module
+ * \return Data read from the I2C_SLAVE module
  */
-uint8_t I2C_0_read(void)
+uint8_t I2C_SLAVE_read(void)
 {
 	return TWI0.SDATA;
 }
 
 /**
- * \brief Write one byte to the data register of I2C_0
+ * \brief Write one byte to the data register of I2C_SLAVE
  *
  * Function will not block if data cannot be safely accepted, so should
  * only be called when safe, i.e. in the read callback handler.
@@ -214,20 +214,20 @@ uint8_t I2C_0_read(void)
  *
  * \return Nothing
  */
-void I2C_0_write(uint8_t data)
+void I2C_SLAVE_write(uint8_t data)
 {
 	TWI0.SDATA = data;
 	TWI0.SCTRLB |= TWI_SCMD_RESPONSE_gc;
 }
 
 /**
- * \brief Enable address recognition in I2C_0
+ * \brief Enable address recognition in I2C_SLAVE
  * 1. If supported by the clock system, enables the clock to the module
  * 2. Enables the I2C slave functionality  by setting the enable-bit in the HW's control register
  *
  * \return Nothing
  */
-void I2C_0_enable(void)
+void I2C_SLAVE_enable(void)
 {
 	TWI0.SCTRLA |= TWI_ENABLE_bm;
 }
@@ -238,7 +238,7 @@ void I2C_0_enable(void)
  *
  * \return Nothing
  */
-void I2C_0_send_ack(void)
+void I2C_SLAVE_send_ack(void)
 {
 	TWI0.SCTRLB = TWI_ACKACT_ACK_gc | TWI_SCMD_RESPONSE_gc;
 }
@@ -249,7 +249,7 @@ void I2C_0_send_ack(void)
  *
  * \return Nothing
  */
-void I2C_0_send_nack(void)
+void I2C_SLAVE_send_nack(void)
 {
 	TWI0.SCTRLB = TWI_ACKACT_NACK_gc | TWI_SCMD_COMPTRANS_gc;
 }
@@ -260,7 +260,7 @@ void I2C_0_send_nack(void)
  *
  * \return Nothing
  */
-void I2C_0_goto_unaddressed(void)
+void I2C_SLAVE_goto_unaddressed(void)
 {
 	// Reset module
 	TWI0.SSTATUS |= (TWI_DIF_bm | TWI_APIF_bm);
@@ -268,10 +268,10 @@ void I2C_0_goto_unaddressed(void)
 }
 
 // Read Event Interrupt Handlers
-void I2C_0_read_callback(void)
+void I2C_SLAVE_read_callback(void)
 {
-	if (I2C_0_read_interrupt_handler) {
-		I2C_0_read_interrupt_handler();
+	if (I2C_SLAVE_read_interrupt_handler) {
+		I2C_SLAVE_read_interrupt_handler();
 	}
 }
 
@@ -280,16 +280,16 @@ void I2C_0_read_callback(void)
  *
  * \return Nothing
  */
-void I2C_0_set_read_callback(I2C_0_callback handler)
+void I2C_SLAVE_set_read_callback(I2C_SLAVE_callback handler)
 {
-	I2C_0_read_interrupt_handler = handler;
+	I2C_SLAVE_read_interrupt_handler = handler;
 }
 
 // Write Event Interrupt Handlers
-void I2C_0_write_callback(void)
+void I2C_SLAVE_write_callback(void)
 {
-	if (I2C_0_write_interrupt_handler) {
-		I2C_0_write_interrupt_handler();
+	if (I2C_SLAVE_write_interrupt_handler) {
+		I2C_SLAVE_write_interrupt_handler();
 	}
 }
 
@@ -298,16 +298,16 @@ void I2C_0_write_callback(void)
  *
  * \return Nothing
  */
-void I2C_0_set_write_callback(I2C_0_callback handler)
+void I2C_SLAVE_set_write_callback(I2C_SLAVE_callback handler)
 {
-	I2C_0_write_interrupt_handler = handler;
+	I2C_SLAVE_write_interrupt_handler = handler;
 }
 
 // Address Event Interrupt Handlers
-void I2C_0_address_callback(void)
+void I2C_SLAVE_address_callback(void)
 {
-	if (I2C_0_address_interrupt_handler) {
-		I2C_0_address_interrupt_handler();
+	if (I2C_SLAVE_address_interrupt_handler) {
+		I2C_SLAVE_address_interrupt_handler();
 	}
 }
 
@@ -316,16 +316,16 @@ void I2C_0_address_callback(void)
  *
  * \return Nothing
  */
-void I2C_0_set_address_callback(I2C_0_callback handler)
+void I2C_SLAVE_set_address_callback(I2C_SLAVE_callback handler)
 {
-	I2C_0_address_interrupt_handler = handler;
+	I2C_SLAVE_address_interrupt_handler = handler;
 }
 
 // Stop Event Interrupt Handlers
-void I2C_0_stop_callback(void)
+void I2C_SLAVE_stop_callback(void)
 {
-	if (I2C_0_stop_interrupt_handler) {
-		I2C_0_stop_interrupt_handler();
+	if (I2C_SLAVE_stop_interrupt_handler) {
+		I2C_SLAVE_stop_interrupt_handler();
 	}
 }
 
@@ -334,16 +334,16 @@ void I2C_0_stop_callback(void)
  *
  * \return Nothing
  */
-void I2C_0_set_stop_callback(I2C_0_callback handler)
+void I2C_SLAVE_set_stop_callback(I2C_SLAVE_callback handler)
 {
-	I2C_0_stop_interrupt_handler = handler;
+	I2C_SLAVE_stop_interrupt_handler = handler;
 }
 
 // Bus Collision Event Interrupt Handlers
-void I2C_0_collision_callback(void)
+void I2C_SLAVE_collision_callback(void)
 {
-	if (I2C_0_collision_interrupt_handler) {
-		I2C_0_collision_interrupt_handler();
+	if (I2C_SLAVE_collision_interrupt_handler) {
+		I2C_SLAVE_collision_interrupt_handler();
 	}
 }
 
@@ -352,16 +352,16 @@ void I2C_0_collision_callback(void)
  *
  * \return Nothing
  */
-void I2C_0_set_collision_callback(I2C_0_callback handler)
+void I2C_SLAVE_set_collision_callback(I2C_SLAVE_callback handler)
 {
-	I2C_0_collision_interrupt_handler = handler;
+	I2C_SLAVE_collision_interrupt_handler = handler;
 }
 
 // Bus Error Event Interrupt Handlers
-void I2C_0_bus_error_callback(void)
+void I2C_SLAVE_bus_error_callback(void)
 {
-	if (I2C_0_bus_error_interrupt_handler) {
-		I2C_0_bus_error_interrupt_handler();
+	if (I2C_SLAVE_bus_error_interrupt_handler) {
+		I2C_SLAVE_bus_error_interrupt_handler();
 	}
 }
 
@@ -370,7 +370,7 @@ void I2C_0_bus_error_callback(void)
  *
  * \return Nothing
  */
-void I2C_0_set_bus_error_callback(I2C_0_callback handler)
+void I2C_SLAVE_set_bus_error_callback(I2C_SLAVE_callback handler)
 {
-	I2C_0_bus_error_interrupt_handler = handler;
+	I2C_SLAVE_bus_error_interrupt_handler = handler;
 }

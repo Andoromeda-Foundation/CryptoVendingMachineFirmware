@@ -18,7 +18,7 @@ static motor_event_callback_t motor_event_callback;
 
 static void setup_motor_feedback_interrupt()
 {
-	MFB_set_isc(PORT_ISC_BOTHEDGES_gc);
+	//MFB_set_isc(PORT_ISC_BOTHEDGES_gc);
 }
 
 void motor_timeout()
@@ -30,11 +30,14 @@ void motor_timeout()
     }
 }
 
-
 void setup_motor_interrupt()
 {
 	setup_motor_feedback_interrupt();
-    TIMER_0_set_timeout_callback(motor_timeout);
+    MOTOR_TIMER_set_timeout_callback(motor_timeout);
+    // Timeout 7s, prescalar 1024, clock 5MHz
+    // Ttick = 1s / (5Mhz * 1s) * 1024 = 204.8us
+    // 7s / 204.8us = 34179.6875
+    //TIMER_0_set_timeout(0x1000);
 }
 
 void init_motor_controller()
@@ -44,17 +47,16 @@ void init_motor_controller()
 
 static void start_motor_timer()
 {
-    TIMER_0_start();
+    MOTOR_TIMER_start();
 }
 
 static void stop_motor_timer()
 {
-    TIMER_0_stop();
+    MOTOR_TIMER_stop();
 }
 
 void enable_motor(MotorId motorId)
 {
-    printf("enabling motor %d...\r\n", motorId);
 	disable_motor();
 	
 	MotorRunning = motorId;
@@ -70,21 +72,18 @@ void enable_motor(MotorId motorId)
             MCTR3_set_level(true);
             break;
     }
-    
 	motor_feedback_enabled = 1;
 	start_motor_timer();
-    printf("motor enabled\r\n");
+    printf("motor %d enabled\r\n", motorId);
 }
 
 void disable_motor()
 {
-    printf("disabling motor...\r\n");
 	MCTR1_set_level(false);
 	MCTR2_set_level(false);
 	MCTR3_set_level(false);
 	motor_feedback_enabled = 0;
 	stop_motor_timer();
-    printf("motor disabled\r\n");
 }
 
 static volatile int waiting_for_falling_edge;

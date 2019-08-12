@@ -45,7 +45,7 @@
 int8_t BOD_init()
 {
 
-	ccp_write_io((void *)&(BOD.CTRLA), BOD_SLEEP_ENABLED_gc /* Enabled */);
+	// ccp_write_io((void*)&(BOD.CTRLA),BOD_SLEEP_DIS_gc /* Disabled */);
 
 	// BOD.INTCTRL = 0 << BOD_VLMIE_bp /* voltage level monitor interrrupt enable: disabled */
 	//		 | BOD_VLMCFG_BELOW_gc; /* Interrupt when supply goes below VLM level */

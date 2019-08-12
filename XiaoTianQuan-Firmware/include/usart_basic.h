@@ -36,75 +36,41 @@ extern "C" {
 #endif
 
 /* Normal Mode, Baud register value */
-#define USART0_BAUD_RATE(BAUD_RATE) ((float)(10000000.0 * 64 / (16 * (float)BAUD_RATE)) + 0.5)
+#define USART2_BAUD_RATE(BAUD_RATE) ((float)(5000000.0 * 64 / (16 * (float)BAUD_RATE)) + 0.5)
 
-/* USART_0 Ringbuffer */
+/* DBG_USART Ringbuffer */
 
-#define USART_0_RX_BUFFER_SIZE 8
-#define USART_0_TX_BUFFER_SIZE 8
-#define USART_0_RX_BUFFER_MASK (USART_0_RX_BUFFER_SIZE - 1)
-#define USART_0_TX_BUFFER_MASK (USART_0_TX_BUFFER_SIZE - 1)
+#define DBG_USART_RX_BUFFER_SIZE 8
+#define DBG_USART_TX_BUFFER_SIZE 8
+#define DBG_USART_RX_BUFFER_MASK (DBG_USART_RX_BUFFER_SIZE - 1)
+#define DBG_USART_TX_BUFFER_MASK (DBG_USART_TX_BUFFER_SIZE - 1)
 
 typedef enum { RX_CB = 1, UDRE_CB } usart_cb_type_t;
 typedef void (*usart_cb_t)(void);
 
-int8_t USART_0_init();
+int8_t DBG_USART_init();
 
-void USART_0_enable();
+void DBG_USART_enable();
 
-void USART_0_enable_rx();
+void DBG_USART_enable_rx();
 
-void USART_0_enable_tx();
+void DBG_USART_enable_tx();
 
-void USART_0_disable();
+void DBG_USART_disable();
 
-uint8_t USART_0_get_data();
+uint8_t DBG_USART_get_data();
 
-bool USART_0_is_tx_ready();
+bool DBG_USART_is_tx_ready();
 
-bool USART_0_is_rx_ready();
+bool DBG_USART_is_rx_ready();
 
-bool USART_0_is_tx_busy();
+bool DBG_USART_is_tx_busy();
 
-uint8_t USART_0_read(void);
+uint8_t DBG_USART_read(void);
 
-void USART_0_write(const uint8_t data);
+void DBG_USART_write(const uint8_t data);
 
-void USART_0_set_ISR_cb(usart_cb_t cb, usart_cb_type_t type);
-
-/* Normal Mode, Baud register value */
-#define USART2_BAUD_RATE(BAUD_RATE) ((float)(10000000.0 * 64 / (16 * (float)BAUD_RATE)) + 0.5)
-
-/* USART_1 Ringbuffer */
-
-#define USART_1_RX_BUFFER_SIZE 8
-#define USART_1_TX_BUFFER_SIZE 8
-#define USART_1_RX_BUFFER_MASK (USART_1_RX_BUFFER_SIZE - 1)
-#define USART_1_TX_BUFFER_MASK (USART_1_TX_BUFFER_SIZE - 1)
-
-int8_t USART_1_init();
-
-void USART_1_enable();
-
-void USART_1_enable_rx();
-
-void USART_1_enable_tx();
-
-void USART_1_disable();
-
-uint8_t USART_1_get_data();
-
-bool USART_1_is_tx_ready();
-
-bool USART_1_is_rx_ready();
-
-bool USART_1_is_tx_busy();
-
-uint8_t USART_1_read(void);
-
-void USART_1_write(const uint8_t data);
-
-void USART_1_set_ISR_cb(usart_cb_t cb, usart_cb_type_t type);
+void DBG_USART_set_ISR_cb(usart_cb_t cb, usart_cb_type_t type);
 
 #ifdef __cplusplus
 }

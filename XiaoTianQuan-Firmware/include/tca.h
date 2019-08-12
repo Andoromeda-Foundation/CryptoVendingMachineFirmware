@@ -34,13 +34,10 @@
 extern "C" {
 #endif
 
-int8_t TIMER_0_init();
-void TIMER_0_start();
-void TIMER_0_stop();
-uint16_t TIMER_0_get();
-void TIMER_0_set_timeout(uint16_t period);
-void TIMER_0_set_timeout_callback(void (*cb)());
-
+int8_t MOTOR_TIMER_init();
+void MOTOR_TIMER_start();
+void MOTOR_TIMER_stop();
+void MOTOR_TIMER_set_timeout_callback(void (*cb)(void));
 
 #ifdef __cplusplus
 }

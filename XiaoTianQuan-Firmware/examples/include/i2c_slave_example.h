@@ -28,6 +28,6 @@
 #ifndef I2C_SLAVE_EXAMPLE_H
 #define I2C_SLAVE_EXAMPLE_H
 
-uint8_t I2C_0_test_i2c_slave(void);
+uint8_t I2C_SLAVE_test_i2c_slave(void);
 
 #endif /* I2C_SLAVE_EXAMPLE_H */

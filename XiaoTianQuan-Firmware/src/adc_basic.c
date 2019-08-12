@@ -1,7 +1,7 @@
 /**
  * \file
  *
- * \brief ADC Window driver implementation.
+ * \brief ADC Basic driver implementation.
  *
  (c) 2018 Microchip Technology Inc. and its subsidiaries.
 
@@ -26,7 +26,7 @@
  */
 
 /**
- * \defgroup doc_driver_adc_window ADC Window Driver
+ * \defgroup doc_driver_adc_basic ADC Basic Driver
  * \ingroup doc_driver_adc
  *
  * \section doc_driver_adc_rev Revision History
@@ -34,23 +34,21 @@
  *
  *@{
  */
-#include <adc_window.h>
+#include <adc_basic.h>
 
 /** Function pointer to callback function called by IRQ.
     NULL=default value: No callback function is to be used.
 */
-adc_irq_cb_t ADC_0_window_cb = NULL;
-
-/**
- * \brief Initialize ADC interface
- * If module is configured to disabled state, the clock to the ADC is disabled
- * if this is supported by the device's clock system.
- *
- * \return Initialization status.
- * \retval 0 the ADC init was successful
- * \retval 1 the ADC init was not successful
- */
-int8_t ADC_0_init()
+adc_irq_cb_t BATTERY_ADC_cb = NULL; /**
+                                     * \brief Initialize ADC interface
+                                     * If module is configured to disabled state, the clock to the ADC is disabled
+                                     * if this is supported by the device's clock system.
+                                     *
+                                     * \return Initialization status.
+                                     * \retval 0 the ADC init was successful
+                                     * \retval 1 the ADC init was not successful
+                                     */
+int8_t BATTERY_ADC_init()
 {
 
 	// ADC0.CALIB = ADC_DUTYCYC_DUTY50_gc; /* 50% Duty cycle */
@@ -65,7 +63,7 @@ int8_t ADC_0_init()
 	//		 | 0x0 << ADC_SAMPDLY_gp /* Sampling Delay Selection: 0x0 */
 	//		 | ADC_INITDLY_DLY0_gc; /* Delay 0 CLK_ADC cycles */
 
-	ADC0.CTRLE = ADC_WINCM_BELOW_gc; /* Below Window */
+	// ADC0.CTRLE = ADC_WINCM_NONE_gc; /* No Window Comparison */
 
 	// ADC0.DBGCTRL = 0 << ADC_DBGRUN_bp; /* Debug run: disabled */
 
@@ -78,112 +76,49 @@ int8_t ADC_0_init()
 
 	// ADC0.SAMPCTRL = 0x0 << ADC_SAMPLEN_gp; /* Sample length: 0x0 */
 
-	ADC0.WINHT = 0x3e; /* Window Comparator High Threshold: 0x3e */
+	// ADC0.WINHT = 0x0; /* Window Comparator High Threshold: 0x0 */
 
 	// ADC0.WINLT = 0x0; /* Window Comparator Low Threshold: 0x0 */
 
 	ADC0.CTRLA = 1 << ADC_ENABLE_bp     /* ADC Enable: enabled */
 	             | 0 << ADC_FREERUN_bp  /* ADC Freerun mode: disabled */
-	             | ADC_RESSEL_10BIT_gc  /* 10-bit mode */
-	             | 0 << ADC_RUNSTBY_bp; /* Run standby mode: disabled */
+	             | ADC_RESSEL_8BIT_gc   /* 8-bit mode */
+	             | 1 << ADC_RUNSTBY_bp; /* Run standby mode: enabled */
 
 	return 0;
 }
 
 /**
- * \brief Enable ADC_0
+ * \brief Enable BATTERY_ADC
  * 1. If supported by the clock system, enables the clock to the ADC
  * 2. Enables the ADC module by setting the enable-bit in the ADC control register
  *
  * \return Nothing
  */
-void ADC_0_enable()
+void BATTERY_ADC_enable()
 {
 	ADC0.CTRLA |= ADC_ENABLE_bm;
 }
-
 /**
- * \brief Disable ADC_0
+ * \brief Disable BATTERY_ADC
  * 1. Disables the ADC module by clearing the enable-bit in the ADC control register
  * 2. If supported by the clock system, disables the clock to the ADC
  *
  * \return Nothing
  */
-void ADC_0_disable()
+void BATTERY_ADC_disable()
 {
 	ADC0.CTRLA &= ~ADC_ENABLE_bm;
 }
 
 /**
- * \brief Enable conversion auto-trigger
- *
- * \return Nothing
- */
-void ADC_0_enable_autotrigger()
-{
-	ADC0.EVCTRL |= ADC_STARTEI_bm;
-}
-
-/**
- * \brief Disable conversion auto-trigger
- *
- * \return Nothing
- */
-void ADC_0_disable_autotrigger()
-{
-	ADC0.EVCTRL &= ~ADC_STARTEI_bm;
-}
-
-/**
- * \brief Set conversion window comparator high threshold
- *
- * \return Nothing
- */
-void ADC_0_set_window_high(adc_result_t high)
-{
-	ADC0.WINHT = high;
-}
-
-/**
- * \brief Set conversion window comparator low threshold
- *
- * \return Nothing
- */
-void ADC_0_set_window_low(adc_result_t low)
-{
-	ADC0.WINLT = low;
-}
-
-/**
- * \brief Set conversion window mode
- *
- * \return Nothing
- */
-void ADC_0_set_window_mode(adc_window_mode_t mode)
-{
-	ADC0.CTRLE = mode;
-}
-
-/**
- * \brief Set ADC channel to be used for windowed conversion mode
+ * \brief Start a conversion on BATTERY_ADC
  *
  * \param[in] channel The ADC channel to start conversion on
  *
  * \return Nothing
  */
-void ADC_0_set_window_channel(adc_0_channel_t channel)
-{
-	ADC0.MUXPOS = channel;
-}
-
-/**
- * \brief Start a conversion on ADC_0
- *
- * \param[in] channel The ADC channel to start conversion on
- *
- * \return Nothing
- */
-void ADC_0_start_conversion(adc_0_channel_t channel)
+void BATTERY_ADC_start_conversion(adc_0_channel_t channel)
 {
 	ADC0.MUXPOS  = channel;
 	ADC0.COMMAND = ADC_STCONV_bm;
@@ -196,47 +131,35 @@ void ADC_0_start_conversion(adc_0_channel_t channel)
  * \retval true The ADC conversion is done
  * \retval false The ADC converison is not done
  */
-bool ADC_0_is_conversion_done()
+bool BATTERY_ADC_is_conversion_done()
 {
 	return (ADC0.INTFLAGS & ADC_RESRDY_bm);
 }
 
 /**
- * \brief Read a conversion result from ADC_0
+ * \brief Read a conversion result from BATTERY_ADC
  *
- * \return Conversion result read from the ADC_0 ADC module
+ * \return Conversion result read from the BATTERY_ADC ADC module
  */
-adc_result_t ADC_0_get_conversion_result(void)
+adc_result_t BATTERY_ADC_get_conversion_result(void)
 {
 	return (ADC0.RES);
 }
 
 /**
- * \brief Read the conversion window result from ADC_0
- *
- * \return Returns true when a comparison results in a trigger condition, false otherwise.
- */
-bool ADC_0_get_window_result(void)
-{
-	bool temp     = (ADC0.INTFLAGS & ADC_WCMP_bm);
-	ADC0.INTFLAGS = ADC_WCMP_bm; // Clear intflag if set
-	return temp;
-}
-
-/**
  * \brief Start a conversion, wait until ready, and return the conversion result
  *
- * \return Conversion result read from the ADC_0 ADC module
+ * \return Conversion result read from the BATTERY_ADC ADC module
  */
-adc_result_t ADC_0_get_conversion(adc_0_channel_t channel)
+adc_result_t BATTERY_ADC_get_conversion(adc_0_channel_t channel)
 {
 	adc_result_t res;
 
-	ADC_0_start_conversion(channel);
-	while (!ADC_0_is_conversion_done())
+	BATTERY_ADC_start_conversion(channel);
+	while (!BATTERY_ADC_is_conversion_done())
 		;
-	res           = ADC_0_get_conversion_result();
-	ADC0.INTFLAGS = ADC_RESRDY_bm;
+	res = BATTERY_ADC_get_conversion_result();
+	ADC0.INTFLAGS |= ADC_RESRDY_bm;
 	return res;
 }
 
@@ -245,30 +168,29 @@ adc_result_t ADC_0_get_conversion(adc_0_channel_t channel)
  *
  * \return The number of bits in the ADC conversion result
  */
-uint8_t ADC_0_get_resolution()
+uint8_t BATTERY_ADC_get_resolution()
 {
 	return (ADC0.CTRLA & ADC_RESSEL_bm) ? 8 : 10;
 }
 
 /**
- * \brief Register a callback function to be called if conversion satisfies window criteria.
+ * \brief Register a callback function to be called at the end of the ADC ISR.
  *
  * \param[in] f Pointer to function to be called
  *
  * \return Nothing.
  */
-void ADC_0_register_window_callback(adc_irq_cb_t f)
+void BATTERY_ADC_register_callback(adc_irq_cb_t f)
 {
-	ADC_0_window_cb = f;
+	BATTERY_ADC_cb = f;
 }
 
-ISR(ADC0_WCOMP_vect)
+ISR(ADC0_RESRDY_vect)
 {
-    return;
-	if (ADC_0_window_cb != NULL) {
-		ADC_0_window_cb();
-	}
-
 	// Clear the interrupt flag
-	ADC0.INTFLAGS = ADC_WCMP_bm;
+	ADC0.INTFLAGS |= ADC_RESRDY_bm;
+
+	if (BATTERY_ADC_cb != NULL) {
+		BATTERY_ADC_cb();
+	}
 }

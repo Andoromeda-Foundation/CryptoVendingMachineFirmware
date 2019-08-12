@@ -47,17 +47,12 @@
 
 #include <vref.h>
 
-#include <adc_window.h>
-
-#include <usart_basic.h>
+#include <adc_basic.h>
 
 #include <usart_basic.h>
 
 #include <interrupt_avr8.h>
 #include <tca.h>
-
-#include <interrupt_avr8.h>
-#include <tcb.h>
 
 #include <evsys.h>
 #include <cpuint.h>

@@ -1,7 +1,7 @@
 /**
  * \file
  *
- * \brief USART basic driver example.
+ * \brief ADC Basic driver example.
  *
  (c) 2018 Microchip Technology Inc. and its subsidiaries.
 
@@ -25,42 +25,52 @@
  *
  */
 
-#include <stdio.h>
-#include <string.h>
 #include <atmel_start.h>
-#include <usart_basic_example.h>
-#include <usart_basic.h>
+#include <adc_basic_example.h>
+#include <adc_basic.h>
 #include <atomic.h>
 
-static uint8_t rx[16];
+volatile bool         BATTERY_ADC_isr_executed = false;
+volatile adc_result_t BATTERY_ADC_measurement;
+volatile uint8_t      BATTERY_ADC_measurement_normalized;
 
-uint8_t DBG_USART_test_usart_basic(void)
+void BATTERY_ADC_adc_handler_cb(void)
 {
-	uint8_t i;
+	BATTERY_ADC_measurement            = BATTERY_ADC_get_conversion_result();
+	BATTERY_ADC_measurement_normalized = BATTERY_ADC_measurement >> (BATTERY_ADC_get_resolution() - 8);
+	BATTERY_ADC_isr_executed           = true;
+}
 
-	// If USART Basic driver is in IRQ-mode, enable global interrupts.
+uint8_t BATTERY_ADC_test_adc_basic(void)
+{
+
+	// Test driver functions, assume that an AIN channel is enabled and that
+	// the Result Ready IRQ is enabled.
+
+	// Test polled mode
+
+	// Get conversion from specified ADC channel
+	BATTERY_ADC_measurement = BATTERY_ADC_get_conversion(0);
+
+	// Get 8 MSB of conversion result
+	BATTERY_ADC_measurement_normalized = BATTERY_ADC_measurement >> (BATTERY_ADC_get_resolution() - 8);
+
+	// Test IRQ mode
+
 	ENABLE_INTERRUPTS();
 
-	// Test driver functions, assumes that the USART RX and
-	// TX pins have been loopbacked, or that USART hardware
-	// is configured in loopback mode
+	BATTERY_ADC_register_callback(BATTERY_ADC_adc_handler_cb);
 
-	// Test printf() support
-	printf("hello");
+	// make sure flag is false
+	BATTERY_ADC_isr_executed = false;
 
-	// Check that "hello" was received on loopback RX.
-	// Initialize rx buffer so strncmp() check will work
-	memset(rx, 0, sizeof(rx));
-	for (i = 0; i < strlen("hello"); i++) {
-		rx[i] = DBG_USART_read(); // Blocks until character is available
-	}
+	// Start conversion from ADC CH0
+	BATTERY_ADC_start_conversion(0);
 
-	// Compare received and expected data
-	if (strncmp("hello", (char *)rx, strlen("hello")) != 0)
-		return 0; // Error: Mismatch
+	// Wait for ISR to be executed
+	while (!BATTERY_ADC_isr_executed)
+		;
 
-	// If we get here, everything was OK
-	printf("ok");
-
+	DISABLE_INTERRUPTS();
 	return 1;
 }

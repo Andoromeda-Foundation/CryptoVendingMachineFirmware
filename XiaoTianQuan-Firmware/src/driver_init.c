@@ -37,52 +37,25 @@
 #include <system.h>
 
 /* Configure pins and initialize registers */
-void ADC_0_initialization(void)
+void BATTERY_ADC_initialization(void)
 {
 
 	// Disable digital input buffer
-	VBAT_MONITOR_set_isc(PORT_ISC_INPUT_DISABLE_gc);
+	PD0_set_isc(PORT_ISC_INPUT_DISABLE_gc);
 	// Disable pull-up resistor
-	VBAT_MONITOR_set_pull_mode(PORT_PULL_OFF);
+	PD0_set_pull_mode(PORT_PULL_OFF);
 
-	ADC_0_init();
+	BATTERY_ADC_init();
 }
 
 /* configure the pins and initialize the registers */
-void USART_0_initialization(void)
+void DBG_USART_initialization(void)
 {
 
 	// Set pin direction to input
-	APP_RXD_set_dir(PORT_DIR_IN);
+	PF5_set_dir(PORT_DIR_IN);
 
-	APP_RXD_set_pull_mode(
-	    // <y> Pull configuration
-	    // <id> pad_pull_config
-	    // <PORT_PULL_OFF"> Off
-	    // <PORT_PULL_UP"> Pull-up
-	    PORT_PULL_OFF);
-
-	// Set pin direction to output
-	APP_TXD_set_dir(PORT_DIR_OUT);
-
-	APP_TXD_set_level(
-	    // <y> Initial level
-	    // <id> pad_initial_level
-	    // <false"> Low
-	    // <true"> High
-	    false);
-
-	USART_0_init();
-}
-
-/* configure the pins and initialize the registers */
-void USART_1_initialization(void)
-{
-
-	// Set pin direction to input
-	DBG_RXD_set_dir(PORT_DIR_IN);
-
-	DBG_RXD_set_pull_mode(
+	PF5_set_pull_mode(
 	    // <y> Pull configuration
 	    // <id> pad_pull_config
 	    // <PORT_PULL_OFF"> Off
@@ -94,9 +67,9 @@ void USART_1_initialization(void)
 	PORTMUX.USARTROUTEA |= PORTMUX_USART20_bm;
 
 	// Set pin direction to output
-	DBG_TXD_set_dir(PORT_DIR_OUT);
+	PF4_set_dir(PORT_DIR_OUT);
 
-	DBG_TXD_set_level(
+	PF4_set_level(
 	    // <y> Initial level
 	    // <id> pad_initial_level
 	    // <false"> Low
@@ -107,19 +80,13 @@ void USART_1_initialization(void)
 
 	PORTMUX.USARTROUTEA |= PORTMUX_USART20_bm;
 
-	USART_1_init();
+	DBG_USART_init();
 }
 
-void TIMER_0_initialization(void)
+void MOTOR_TIMER_initialization(void)
 {
 
-	TIMER_0_init();
-}
-
-void TIMER_1_initialization(void)
-{
-
-	TIMER_1_init();
+	MOTOR_TIMER_init();
 }
 
 void EVENT_SYSTEM_0_initialization(void)
@@ -129,10 +96,10 @@ void EVENT_SYSTEM_0_initialization(void)
 }
 
 /* configure pins and initialize registers */
-void I2C_0_initialization(void)
+void I2C_SLAVE_initialization(void)
 {
 
-	SCL_set_dir(
+	PF3_set_dir(
 	    // <y> Pin direction
 	    // <id> pad_dir
 	    // <PORT_DIR_OFF"> Off
@@ -140,28 +107,28 @@ void I2C_0_initialization(void)
 	    // <PORT_DIR_OUT"> Out
 	    PORT_DIR_OUT);
 
-	SCL_set_level(
+	PF3_set_level(
 	    // <y> Initial level
 	    // <id> pad_initial_level
 	    // <false"> Low
 	    // <true"> High
 	    false);
 
-	SCL_set_pull_mode(
+	PF3_set_pull_mode(
 	    // <y> Pull configuration
 	    // <id> pad_pull_config
 	    // <PORT_PULL_OFF"> Off
 	    // <PORT_PULL_UP"> Pull-up
 	    PORT_PULL_OFF);
 
-	SCL_set_inverted(
+	PF3_set_inverted(
 	    // <y> Invert I/O on pin
 	    // <id> pad_invert
 	    // <false"> Not inverted
 	    // <true"> Inverted
 	    false);
 
-	SCL_set_isc(
+	PF3_set_isc(
 	    // <y> Pin Input/Sense Configuration
 	    // <id> pad_isc
 	    // <PORT_ISC_INTDISABLE_gc"> Interrupt disabled but input buffer enabled
@@ -176,7 +143,7 @@ void I2C_0_initialization(void)
 
 	PORTMUX.TWISPIROUTEA |= PORTMUX_TWI00_bm;
 
-	SDA_set_dir(
+	PF2_set_dir(
 	    // <y> Pin direction
 	    // <id> pad_dir
 	    // <PORT_DIR_OFF"> Off
@@ -184,28 +151,28 @@ void I2C_0_initialization(void)
 	    // <PORT_DIR_OUT"> Out
 	    PORT_DIR_OUT);
 
-	SDA_set_level(
+	PF2_set_level(
 	    // <y> Initial level
 	    // <id> pad_initial_level
 	    // <false"> Low
 	    // <true"> High
 	    false);
 
-	SDA_set_pull_mode(
+	PF2_set_pull_mode(
 	    // <y> Pull configuration
 	    // <id> pad_pull_config
 	    // <PORT_PULL_OFF"> Off
 	    // <PORT_PULL_UP"> Pull-up
 	    PORT_PULL_OFF);
 
-	SDA_set_inverted(
+	PF2_set_inverted(
 	    // <y> Invert I/O on pin
 	    // <id> pad_invert
 	    // <false"> Not inverted
 	    // <true"> Inverted
 	    false);
 
-	SDA_set_isc(
+	PF2_set_isc(
 	    // <y> Pin Input/Sense Configuration
 	    // <id> pad_isc
 	    // <PORT_ISC_INTDISABLE_gc"> Interrupt disabled but input buffer enabled
@@ -220,7 +187,7 @@ void I2C_0_initialization(void)
 
 	PORTMUX.TWISPIROUTEA |= PORTMUX_TWI00_bm;
 
-	I2C_0_init();
+	I2C_SLAVE_init();
 }
 
 /**
@@ -233,14 +200,14 @@ void system_init()
 	/* PORT setting on PA2 */
 
 	// Set pin direction to output
-	APP_PWR_set_dir(PORT_DIR_OUT);
+	APP_POWER_set_dir(PORT_DIR_OUT);
 
-	APP_PWR_set_level(
+	APP_POWER_set_level(
 	    // <y> Initial level
 	    // <id> pad_initial_level
 	    // <false"> Low
 	    // <true"> High
-	    true);
+	    false);
 
 	/* PORT setting on PA3 */
 
@@ -268,7 +235,7 @@ void system_init()
 
 	/* PORT setting on PA5 */
 
-	BTN_APP_PWR_set_dir(
+	BTN_APP_POWER_set_dir(
 	    // <y> Pin direction
 	    // <id> pad_dir
 	    // <PORT_DIR_OFF"> Off
@@ -276,28 +243,28 @@ void system_init()
 	    // <PORT_DIR_OUT"> Out
 	    PORT_DIR_IN);
 
-	BTN_APP_PWR_set_level(
+	BTN_APP_POWER_set_level(
 	    // <y> Initial level
 	    // <id> pad_initial_level
 	    // <false"> Low
 	    // <true"> High
-	    false);
+	    true);
 
-	BTN_APP_PWR_set_pull_mode(
+	BTN_APP_POWER_set_pull_mode(
 	    // <y> Pull configuration
 	    // <id> pad_pull_config
 	    // <PORT_PULL_OFF"> Off
 	    // <PORT_PULL_UP"> Pull-up
 	    PORT_PULL_OFF);
 
-	BTN_APP_PWR_set_inverted(
+	BTN_APP_POWER_set_inverted(
 	    // <y> Invert I/O on pin
 	    // <id> pad_invert
 	    // <false"> Not inverted
 	    // <true"> Inverted
 	    false);
 
-	BTN_APP_PWR_set_isc(
+	BTN_APP_POWER_set_isc(
 	    // <y> Pin Input/Sense Configuration
 	    // <id> pad_isc
 	    // <PORT_ISC_INTDISABLE_gc"> Interrupt disabled but input buffer enabled
@@ -323,7 +290,7 @@ void system_init()
 	    // <id> pad_initial_level
 	    // <false"> Low
 	    // <true"> High
-	    false);
+	    true);
 
 	BTN_ROTATE_M_set_pull_mode(
 	    // <y> Pull configuration
@@ -401,7 +368,7 @@ void system_init()
 	    // <id> pad_initial_level
 	    // <false"> Low
 	    // <true"> High
-	    false);
+	    true);
 
 	MFB_set_pull_mode(
 	    // <y> Pull configuration
@@ -426,23 +393,19 @@ void system_init()
 	    // <PORT_ISC_FALLING_gc"> Sense Falling Edge
 	    // <PORT_ISC_INPUT_DISABLE_gc"> Digital Input Buffer disabled
 	    // <PORT_ISC_LEVEL_gc"> Sense low Level
-	    PORT_ISC_BOTHEDGES_gc);
+	    PORT_ISC_FALLING_gc);
 
 	CLKCTRL_init();
 
-	RTC_0_init();
+	RTC_1_init();
 
-	VREF_0_init();
+	BATTERY_ADC_REF_init();
 
-	ADC_0_initialization();
+	BATTERY_ADC_initialization();
 
-	USART_0_initialization();
+	DBG_USART_initialization();
 
-	USART_1_initialization();
-
-	TIMER_0_initialization();
-
-	TIMER_1_initialization();
+	MOTOR_TIMER_initialization();
 
 	EVENT_SYSTEM_0_initialization();
 
@@ -450,7 +413,7 @@ void system_init()
 
 	SLPCTRL_init();
 
-	I2C_0_initialization();
+	I2C_SLAVE_initialization();
 
 	BOD_init();
 }

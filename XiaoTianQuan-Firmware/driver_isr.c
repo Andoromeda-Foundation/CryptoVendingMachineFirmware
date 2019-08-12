@@ -36,7 +36,36 @@
 #include <driver_init.h>
 #include <compiler.h>
 
-#include "motor_controller.h"
+#include "tca.h"
+
+ISR(RTC_CNT_vect)
+{
+
+	/* Insert your RTC Overflow interrupt handling code */
+
+	/* Insert your RTC Compare interrupt handling code */
+
+	/* Overflow and Compare interrupt flags have to cleared manually */
+	RTC.INTFLAGS = RTC_OVF_bm | RTC_CMP_bm;
+}
+
+void (*tca0_cmp0_cb)(void) = NULL;
+
+void MOTOR_TIMER_set_timeout_callback(void (*cb)(void))
+{
+    tca0_cmp0_cb = cb;    
+}
+
+ISR(TCA0_CMP0_vect)
+{
+	/* Insert your TCA Compare 0 Interrupt handling code here */
+    if (tca0_cmp0_cb) {
+        tca0_cmp0_cb();
+    }
+
+	/* The interrupt flag has to be cleared manually */
+	TCA0.SINGLE.INTFLAGS = TCA_SINGLE_CMP0_bm;
+}
 
 ISR(PORTA_PORT_vect)
 {
@@ -49,10 +78,6 @@ ISR(PORTA_PORT_vect)
 ISR(PORTC_PORT_vect)
 {
 	/* Insert your PORTC interrupt handling code here */
-    if (VPORTC_INTFLAGS & (1 << 3)) {
-        process_port_mfb_interrupt();
-    }
-    
 
 	/* Clear interrupt flags */
 	VPORTC_INTFLAGS = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);

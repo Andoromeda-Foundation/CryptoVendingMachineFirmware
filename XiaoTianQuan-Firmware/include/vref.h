@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-int8_t VREF_0_init();
+int8_t BATTERY_ADC_REF_init();
 
 #ifdef __cplusplus
 }

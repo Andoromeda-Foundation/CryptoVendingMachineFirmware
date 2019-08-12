@@ -40,7 +40,7 @@
  * \brief Initialize vref interface
  * \return Initialization status.
  */
-int8_t VREF_0_init()
+int8_t BATTERY_ADC_REF_init()
 {
 
 	VREF_CTRLA = VREF_AC0REFSEL_0V55_gc    /* Voltage reference at 0.55V */

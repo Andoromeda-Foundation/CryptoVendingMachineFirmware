@@ -1,7 +1,7 @@
 /**
  * \file
  *
- * \brief ADC Window driver declarations.
+ * \brief ADC Basic driver declarations.
  *
  (c) 2018 Microchip Technology Inc. and its subsidiaries.
 
@@ -25,22 +25,14 @@
  *
  */
 
-#ifndef ADC_WINDOW_H_INCLUDED
-#define ADC_WINDOW_H_INCLUDED
+#ifndef ADC_BASIC_H_INCLUDED
+#define ADC_BASIC_H_INCLUDED
 
 #include <compiler.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-typedef enum {
-	adc_window_disabled,
-	adc_window_below,
-	adc_window_above,
-	adc_window_inside,
-	adc_window_outside
-} adc_window_mode_t;
 
 typedef void (*adc_irq_cb_t)(void);
 
@@ -50,40 +42,26 @@ typedef uint16_t adc_result_t;
 //* Analog channel selection */
 typedef ADC_MUXPOS_t adc_0_channel_t;
 
-int8_t ADC_0_init();
+int8_t BATTERY_ADC_init();
 
-void ADC_0_enable();
+void BATTERY_ADC_enable();
 
-void ADC_0_disable();
+void BATTERY_ADC_disable();
 
-void ADC_0_enable_autotrigger();
+void BATTERY_ADC_start_conversion(adc_0_channel_t channel);
 
-void ADC_0_disable_autotrigger();
+bool BATTERY_ADC_is_conversion_done();
 
-void ADC_0_set_window_high(adc_result_t high);
+adc_result_t BATTERY_ADC_get_conversion_result(void);
 
-void ADC_0_set_window_low(adc_result_t low);
+adc_result_t BATTERY_ADC_get_conversion(adc_0_channel_t channel);
 
-void ADC_0_set_window_mode(adc_window_mode_t mode);
+uint8_t BATTERY_ADC_get_resolution();
 
-void ADC_0_set_window_channel(adc_0_channel_t channel);
-
-void ADC_0_start_conversion(adc_0_channel_t channel);
-
-bool ADC_0_is_conversion_done();
-
-adc_result_t ADC_0_get_conversion_result(void);
-
-bool ADC_0_get_window_result(void);
-
-adc_result_t ADC_0_get_conversion(adc_0_channel_t channel);
-
-uint8_t ADC_0_get_resolution();
-
-void ADC_0_register_window_callback(adc_irq_cb_t f);
+void BATTERY_ADC_register_callback(adc_irq_cb_t f);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* ADC_WINDOW_H_INCLUDED */
+#endif /* ADC_BASIC_H_INCLUDED */

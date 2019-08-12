@@ -48,7 +48,6 @@
         <file category="doc" condition="ARMCC, GCC, IAR" name="modules/rtc/doc/rtc.rst"/>
         <file category="doc" condition="ARMCC, GCC, IAR" name="modules/slpctrl/doc/slpctrl.rst"/>
         <file category="doc" condition="ARMCC, GCC, IAR" name="modules/timer/doc/tca.rst"/>
-        <file category="doc" condition="ARMCC, GCC, IAR" name="modules/timer/doc/tcb.rst"/>
         <file category="doc" condition="ARMCC, GCC, IAR" name="modules/twi/doc/twi.rst"/>
         <file category="doc" condition="ARMCC, GCC, IAR" name="modules/usart/doc/usart_basic.rst"/>
         <file category="doc" condition="ARMCC, GCC, IAR" name="modules/vref/doc/vref.rst"/>
@@ -61,7 +60,7 @@
         <file category="other" condition="ARMCC, GCC, IAR" name="doxygen/generator/doxyfile.doxygen"/>
         <file category="other" condition="ARMCC, GCC, IAR" name="doxygen/generator/DoxygenLayout.xml"/>
         <file category="other" condition="ARMCC, GCC, IAR" name="doxygen/adc.dox"/>
-        <file category="other" condition="ARMCC, GCC, IAR" name="doxygen/adc_window.dox"/>
+        <file category="other" condition="ARMCC, GCC, IAR" name="doxygen/adc_basic.dox"/>
         <file category="other" condition="ARMCC, GCC, IAR" name="doxygen/i2c.dox"/>
         <file category="other" condition="ARMCC, GCC, IAR" name="doxygen/i2c_slave.dox"/>
         <file category="other" condition="ARMCC, GCC, IAR" name="doxygen/rtc.dox"/>
@@ -69,13 +68,13 @@
         <file category="other" condition="ARMCC, GCC, IAR" name="doxygen/timer.dox"/>
         <file category="other" condition="ARMCC, GCC, IAR" name="doxygen/usart.dox"/>
         <file category="other" condition="ARMCC, GCC, IAR" name="doxygen/usart_basic.dox"/>
-        <file category="header" condition="ARMCC, GCC, IAR" name="examples/include/adc_window_example.h"/>
+        <file category="header" condition="ARMCC, GCC, IAR" name="examples/include/adc_basic_example.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="examples/include/i2c_slave_example.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="examples/include/usart_basic_example.h"/>
-        <file category="source" condition="ARMCC, GCC, IAR" name="examples/src/adc_window_example.c"/>
+        <file category="source" condition="ARMCC, GCC, IAR" name="examples/src/adc_basic_example.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="examples/src/i2c_slave_example.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="examples/src/usart_basic_example.c"/>
-        <file category="header" condition="ARMCC, GCC, IAR" name="include/adc_window.h"/>
+        <file category="header" condition="ARMCC, GCC, IAR" name="include/adc_basic.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="include/bod.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="include/ccp.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="include/clkctrl.h"/>
@@ -89,10 +88,9 @@
         <file category="header" condition="ARMCC, GCC, IAR" name="include/slpctrl.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="include/system.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="include/tca.h"/>
-        <file category="header" condition="ARMCC, GCC, IAR" name="include/tcb.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="include/usart_basic.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="include/vref.h"/>
-        <file category="source" condition="ARMCC, GCC, IAR" name="src/adc_window.c"/>
+        <file category="source" condition="ARMCC, GCC, IAR" name="src/adc_basic.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="src/bod.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="src/clkctrl.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="src/cpuint.c"/>
@@ -102,7 +100,6 @@
         <file category="source" condition="ARMCC, GCC, IAR" name="src/rtc.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="src/slpctrl.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="src/tca.c"/>
-        <file category="source" condition="ARMCC, GCC, IAR" name="src/tcb.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="src/usart_basic.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="src/vref.c"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="utils/assembler.h"/>
