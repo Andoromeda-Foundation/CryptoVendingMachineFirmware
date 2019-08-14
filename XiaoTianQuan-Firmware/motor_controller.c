@@ -2,6 +2,9 @@
 #include <atmel_start.h>
 #include "motor_controller.h"
 
+void MFB_set_change_callback(void (*cb)(void)); // defined in isr
+void process_port_mfb_interrupt();
+
 static volatile int motor_feedback_enabled;	// true if motor started for at least 100ms
 
 static MotorStatus MotorStatusMapping[] = {
@@ -18,7 +21,7 @@ static motor_event_callback_t motor_event_callback;
 
 static void setup_motor_feedback_interrupt()
 {
-	//MFB_set_isc(PORT_ISC_BOTHEDGES_gc);
+	MFB_set_change_callback(process_port_mfb_interrupt);
 }
 
 void motor_timeout()
@@ -90,21 +93,21 @@ static volatile int waiting_for_falling_edge;
 void process_port_mfb_interrupt()
 {
 	if (motor_feedback_enabled) {	// delayed 100ms to enable
-		bool mfb = MFB_get_level();	// true for rising, false for falling, rising for complete, falling for trigger
+		//bool mfb = MFB_get_level();	// true for rising, false for falling, rising for complete, falling for trigger
+		//
+		//if (mfb) {	// rising edge
+			//waiting_for_falling_edge = 1;
+		//}
 		
-		if (mfb) {	// rising edge
-			waiting_for_falling_edge = 1;
-		}
-		
-		if (!mfb) {	// falling
-			if (waiting_for_falling_edge) {
+		//if (!mfb) {	// falling
+			//if (waiting_for_falling_edge) {
 				MotorStatusMapping[MotorRunning] = MOTOR_OK;
 				disable_motor();
 				if (motor_event_callback) {
 					motor_event_callback(MOTOR_EVENT_COMPLETE_OK);
-				}
-			}
-			waiting_for_falling_edge = 0;
+				//}
+			//}
+			//waiting_for_falling_edge = 0;
 		}
 	}
 }

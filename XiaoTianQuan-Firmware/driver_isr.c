@@ -40,7 +40,6 @@
 
 ISR(RTC_CNT_vect)
 {
-
 	/* Insert your RTC Overflow interrupt handling code */
 
 	/* Insert your RTC Compare interrupt handling code */
@@ -75,10 +74,21 @@ ISR(PORTA_PORT_vect)
 	VPORTA_INTFLAGS = (1 << 2) | (1 << 3) | (1 << 4) | (1 << 5) | (1 << 6);
 }
 
+void (*mfb_callback)(void) = NULL;
+
+void MFB_set_change_callback(void (*cb)(void)) {
+    mfb_callback = cb;
+}
+
 ISR(PORTC_PORT_vect)
 {
 	/* Insert your PORTC interrupt handling code here */
-
+    if (VPORTC_INTFLAGS & (1 << 3)) {   // MFB
+        if (mfb_callback) {
+            mfb_callback();
+        }
+    }   
+         
 	/* Clear interrupt flags */
 	VPORTC_INTFLAGS = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
 }

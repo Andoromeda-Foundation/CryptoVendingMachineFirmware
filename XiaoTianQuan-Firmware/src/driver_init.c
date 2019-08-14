@@ -368,7 +368,7 @@ void system_init()
 	    // <id> pad_initial_level
 	    // <false"> Low
 	    // <true"> High
-	    true);
+	    false);
 
 	MFB_set_pull_mode(
 	    // <y> Pull configuration
