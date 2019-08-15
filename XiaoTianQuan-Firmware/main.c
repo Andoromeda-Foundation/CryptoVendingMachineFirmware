@@ -9,7 +9,9 @@ int main(void)
 {
 	/* Initializes MCU, drivers and middleware */
 	atmel_start_init();
+    initialize_batadc();
     init_motor_controller();
+    initialize_i2c();
 
 	/* Replace with your application code */
 	while (1) {
@@ -17,5 +19,7 @@ int main(void)
         _delay_ms(10000);
         disable_motor();
         _delay_ms(2000);
+        printf("PWR: %f\r\n", get_battery_volt());
+        start_battery_volt_conversion();
 	}
 }

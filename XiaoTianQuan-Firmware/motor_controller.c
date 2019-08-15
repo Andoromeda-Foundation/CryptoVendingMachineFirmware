@@ -89,6 +89,11 @@ void disable_motor()
     stop_motor_timer();
 }
 
+MotorStatus get_motor_status(MotorId motorId)
+{
+    return MotorStatusMapping[motorId];
+}
+
 void process_port_mfb_interrupt()
 {
     if (motor_feedback_enabled) {	// when motor enabled
