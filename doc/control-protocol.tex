@@ -107,7 +107,7 @@
         Write 1 to start releasing product in slot. If there's multiple bits set, the least significant bit will be used.
     \end{field}
 
-\subsubsection{Product Release Status, PRS0-RS15}
+\subsubsection{Product Release Status, RS0-RS15}
 
     This register is the status of the slot of last release.
 
@@ -161,13 +161,9 @@
     \addr{0x80}
 
     \begin{regdes}
-    \tdes & \multicolumn{6}{c|}{Reserved} & Slp& AppPwr \\
-    \tacc & \multicolumn{6}{c|}{R} & R/W& R/W \\
+    \tdes & \multicolumn{7}{c|}{\cellcolor{gray!50}Reserved} & AppPwr \\
+    \tacc & \multicolumn{7}{c|}{N/A} & R/W \\
     \end{regdes}
-
-    \begin{field}{Slp}
-        Write 1 to enter sleep mode.
-    \end{field}
 
     \begin{field}{AppPwr}
         Write 1 to turn off power of app board.
@@ -178,6 +174,8 @@
     These register holds the FP32 value battery voltage in Volt.
     
     \addr{0x81}
+    
+    \offset{0-1}
     
     \begin{regdes}
     \tdes & \multicolumn{8}{c|}{Low 16 bits of battery voltage in FP32} \\
