@@ -37,16 +37,21 @@
     \renewcommand\theadfont{\bfseries}
 
     \usepackage{xspace}
-    
+
     \usepackage{tabularx}
 
     \newcommand{\iic}{I\textsuperscript{2}C\xspace}
+    \newcommand{\addr}[1]{\textsf{\textbf{Address} #1}}
+    \newcommand{\offset}[1]{\textsf{\textbf{Offset} #1}}
+    
     \newcommand{\tdes}{\thead{Description}}
     \newcommand{\tacc}{\hline\thead{Access}}
+    
+    
 
     \newcolumntype{Y}{>{\centering\arraybackslash}X}
 
-    \usepackage{environ}    
+    \usepackage{environ}
     \NewEnviron{regdes}{
         \sffamily\begin{tabularx}{\textwidth}{|c|Y|Y|Y|Y|Y|Y|Y|Y|}
             \hline
@@ -64,7 +69,7 @@
         \par
     }{}
 
-    %\newcommand{\fields}{\vspace{2em}\textsf{\textbf{\Large Fields}}} 
+    %\newcommand{\fields}{\vspace{2em}\textsf{\textbf{\Large Fields}}}
 
 \begin{document}
 
@@ -80,45 +85,112 @@
 {\Huge{Work In Progress.}}
 
 \section{Supported Transport Protocols}
-Currently only \iic protocol is supported. Serial is planned.
+    Currently only \iic protocol is supported. Serial is planned.
 
 \section{\iic Protocol}
 \subsection{Registers}
 
-\subsubsection{Product Release Control RC0-RC9}
+\subsubsection{Product Release Control, RC0-RC15}
 
-Address: 0x10
+    This register controls the slot to release the product.
 
-\begin{regdes}
-\tdes & S8 & S7 & S6 & S5 & S4 & S3 & S2 & S1 \\
-\tacc & W  & W  & W  & W  & W  & W  & W  & W  \\
-\end{regdes}
+    \addr{0x10}
 
-\begin{field}{S1-8}
-    Write 1 to start releasing product in slot. If there's multiple bits set, the least significant 1 bit will be used.
-\end{field}
+    \offset{0-F}
 
-\subsubsection{Product Release Status PRS0-RS9}
+    \begin{regdes}
+    \tdes & S8 & S7 & S6 & S5 & S4 & S3 & S2 & S1 \\
+    \tacc & W  & W  & W  & W  & W  & W  & W  & W  \\
+    \end{regdes}
 
-\begin{regdes}
-\tdes & S8 & S7 & S6 & S5 & S4 & S3 & S2 & S1 \\
-\tacc & R/W& R/W& R/W& R/W& R/W& R/W& R/W& R/W \\
-\end{regdes}
+    \begin{field}{S1-8}
+        Write 1 to start releasing product in slot. If there's multiple bits set, the least significant bit will be used.
+    \end{field}
 
-\begin{field}{S1-S8}
-    When read, 1 indicates last release was successful, 0 indicates there's no release or release failed. Write 1 to clear the bit.
-\end{field}
+\subsubsection{Product Release Status, PRS0-RS15}
 
-\subsubsection{Product Release Error RE}
+    This register is the status of the slot of last release.
 
-\begin{regdes}
-\tdes & S8 & S7 & S6 & S5 & S4 & S3 & S2 & S1 \\
-\tacc & R/W& R/W& R/W& R/W& R/W& R/W& R/W& R/W \\
-\end{regdes}
+    \addr{0x20}
+
+    \offset{0-F}
+
+    \begin{regdes}
+    \tdes & S8 & S7 & S6 & S5 & S4 & S3 & S2 & S1 \\
+    \tacc & R  & R  & R  & R  & R  & R  & R  & R  \\
+
+    \end{regdes}
+
+    \begin{field}{S1-S8}
+        0 indicates last release was successful or no release, 1 indicates the release failed.
+    \end{field}
+
+\subsubsection{Product Release Status Slot, RSS}\label{reg:rss}
+
+    \addr{0x30}
+
+    This register holds the slot ID of \ref{reg:re} \verb|RE|. When written, contents of \verb|RE| is changed to the slot ID of \verb|RSS|.
+
+    \begin{regdes}
+    \tdes & \multicolumn{8}{c|}{Slot ID} \\
+    \tacc & \multicolumn{8}{c|}{R/W} \\
+    \end{regdes}
+
+    \begin{field}{Slot ID}
+        The slot ID for register RSS.
+    \end{field}
+
+\subsubsection{Product Release Error, RE}\label{reg:re}
+
+    \addr{0x31}
+
+    This register holds the error information of the slot in \ref{reg:rss} \verb|RSS|..
+
+    \begin{regdes}
+    \tdes & \multicolumn{8}{c|}{Error ID} \\
+    \tacc & \multicolumn{8}{c|}{R} \\
+    \end{regdes}
+
+    \begin{field}{Error ID}
+        The error ID of the corresponding register.
+    \end{field}
 
 
-\subsubsection{Power Control}
+\subsubsection{Power Control, PWR}
 
+    \addr{0x80}
+
+    \begin{regdes}
+    \tdes & \multicolumn{6}{c|}{Reserved} & Slp& AppPwr \\
+    \tacc & \multicolumn{6}{c|}{R} & R/W& R/W \\
+    \end{regdes}
+
+    \begin{field}{Slp}
+        Write 1 to enter sleep mode.
+    \end{field}
+
+    \begin{field}{AppPwr}
+        Write 1 to turn off power of app board.
+    \end{field}
+
+\subsubsection{Battery Voltage, BAT}
+
+    These register holds the FP32 value battery voltage in Volt.
+    
+    \addr{0x81}
+    
+    \begin{regdes}
+    \tdes & \multicolumn{8}{c|}{Low 16 bits of battery voltage in FP32} \\
+    \tacc & \multicolumn{8}{c|}{R} \\
+    \end{regdes}
+
+    \addr{0x82}
+
+    \begin{regdes}
+    \tdes & \multicolumn{8}{c|}{High 16 bits of battery voltage in FP32} \\
+    %\tacc & R/W& R/W& R/W& R/W& R/W& R/W& R/W& R/W \\
+    \tacc & \multicolumn{8}{c|}{R} \\
+    \end{regdes}
 
 
 \end{document}
