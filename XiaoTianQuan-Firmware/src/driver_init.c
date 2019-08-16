@@ -98,14 +98,13 @@ void EVENT_SYSTEM_0_initialization(void)
 /* configure pins and initialize registers */
 void I2C_SLAVE_initialization(void)
 {
-
 	PF3_set_dir(
 	    // <y> Pin direction
 	    // <id> pad_dir
 	    // <PORT_DIR_OFF"> Off
 	    // <PORT_DIR_IN"> In
 	    // <PORT_DIR_OUT"> Out
-	    PORT_DIR_OUT);
+	    PORT_DIR_OFF);
 
 	PF3_set_level(
 	    // <y> Initial level
@@ -149,7 +148,7 @@ void I2C_SLAVE_initialization(void)
 	    // <PORT_DIR_OFF"> Off
 	    // <PORT_DIR_IN"> In
 	    // <PORT_DIR_OUT"> Out
-	    PORT_DIR_OUT);
+	    PORT_DIR_OFF);
 
 	PF2_set_level(
 	    // <y> Initial level

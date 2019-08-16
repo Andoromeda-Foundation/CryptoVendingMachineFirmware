@@ -9,7 +9,7 @@
 #ifndef I2C_H_
 #define I2C_H_
 
- enum 
+enum 
 {
     I2C_REG_RC_0 = 0x10,
     I2C_REG_RC_1 = 0x11,

@@ -86,17 +86,19 @@ void (*I2C_SLAVE_bus_error_interrupt_handler)(void);
 void I2C_SLAVE_init()
 {
 
-	// TWI0.CTRLA = 0 << TWI_FMPEN_bp /* FM Plus Enable: disabled */
-	//		 | TWI_SDAHOLD_OFF_gc /* SDA hold time off */
-	//		 | TWI_SDASETUP_4CYC_gc; /* SDA setup time is 4 clock cycles */
+	TWI0.CTRLA = 0 << TWI_FMPEN_bp /* FM Plus Enable: disabled */
+		 | TWI_SDAHOLD_OFF_gc /* SDA hold time off */
+		 | TWI_SDASETUP_4CYC_gc; /* SDA setup time is 4 clock cycles */
 
-	// TWI0.DBGCTRL = 0 << TWI_DBGRUN_bp; /* Debug Run: disabled */
+	TWI0.DBGCTRL = 0 << TWI_DBGRUN_bp; /* Debug Run: disabled */
+    
 
 	TWI0.SADDR = 0x77 << TWI_ADDRMASK_gp /* Slave Address: 0x77 */
 	             | 0 << TWI_ADDREN_bp;   /* General Call Recognition Enable: disabled */
 
 	// TWI0.SADDRMASK = 0 << TWI_ADDREN_bp /* Address Mask Enable: disabled */
 	//		 | 0x0 << TWI_ADDRMASK_gp; /* Address Mask: 0x0 */
+    //TWI0.SADDRMASK = 0b11111110;
 
 	TWI0.SCTRLA = 1 << TWI_APIEN_bp    /* Address/Stop Interrupt Enable: enabled */
 	              | 1 << TWI_DIEN_bp   /* Data Interrupt Enable: enabled */
@@ -120,6 +122,7 @@ void I2C_SLAVE_init()
  */
 void I2C_SLAVE_open(void)
 {
+    //TWI0.DUALCTRL |= TWI_ENABLE_bm;  // dual control
 	TWI0.SCTRLA |= TWI_ENABLE_bm;
 }
 
@@ -184,6 +187,10 @@ void I2C_SLAVE_isr()
 		TWI0.SCTRLB = TWI_SCMD_COMPTRANS_gc;
 		return;
 	}
+}
+
+ISR(TWI0_TWIM_vect) {
+    TWI0.MSTATUS |= 0b11000000;
 }
 
 ISR(TWI0_TWIS_vect)

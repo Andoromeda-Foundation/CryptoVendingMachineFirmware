@@ -2,8 +2,11 @@
 
 #include <atmel_start.h>
 #include <util/delay.h>
+#include <stdio.h>
 
 #include "motor_controller.h"
+#include "batadc.h"
+#include "i2c.h"
 
 int main(void)
 {
