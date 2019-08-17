@@ -68,6 +68,9 @@ extern "C" {
 
 void system_init(void);
 
+
+#define I2C_SLAVE_ADDR 0x77
+
 #ifdef __cplusplus
 }
 #endif

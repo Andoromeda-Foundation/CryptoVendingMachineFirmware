@@ -218,11 +218,32 @@ static void i2c_stop_handler()
     _writeIndex = 0;
 }
 
+volatile int test;
+
+static void i2c_address_handler()
+{
+    uint8_t addr = I2C_SLAVE_read() >> 1;
+    if (addr == I2C_SLAVE_ADDR) {
+        I2C_SLAVE_send_ack();
+    } else {
+        I2C_SLAVE_send_nack();
+    }
+}
+
+static void i2c_error_handler()
+{
+	//while (1)
+		//;
+}
+
 void initialize_i2c()
 {
     I2C_SLAVE_set_read_callback(i2c_read_handler);
     I2C_SLAVE_set_write_callback(i2c_write_handler);
-    //I2C_SLAVE_set_address_callback(I2C_SLAVE_address_handler);
+    I2C_SLAVE_set_address_callback(i2c_address_handler);
     I2C_SLAVE_set_stop_callback(i2c_stop_handler);
+    I2C_SLAVE_set_collision_callback(i2c_error_handler);
+	I2C_SLAVE_set_bus_error_callback(i2c_error_handler);
     I2C_SLAVE_open();
+    //while (test  < 10);
 }

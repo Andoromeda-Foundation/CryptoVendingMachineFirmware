@@ -42,7 +42,7 @@ void I2C_SLAVE_open(void);
 
 void I2C_SLAVE_close(void);
 
-void I2C_SLAVE_isr(void);
+void I2C_SLAVE_isr(bool);
 
 uint8_t I2C_SLAVE_read(void);
 

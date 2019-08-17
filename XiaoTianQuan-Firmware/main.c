@@ -18,11 +18,19 @@ int main(void)
 
 	/* Replace with your application code */
 	while (1) {
+        while (1) {
+            if (TWI0.SSTATUS) {}
+        }            
+            if (TWI0.SSTATUS /*&& a > 100*/) {
+                //I2C_SLAVE_isr(false);
+            }
+        //}
         enable_motor(MOTOR_3);
         _delay_ms(10000);
         disable_motor();
         _delay_ms(2000);
         printf("PWR: %f\r\n", get_battery_volt());
+
         start_battery_volt_conversion();
 	}
 }
