@@ -24,6 +24,11 @@ static void setup_motor_feedback_interrupt()
     MFB_set_change_callback(process_port_mfb_interrupt);
 }
 
+void set_motor_event_callback(motor_event_callback_t cb)
+{
+    motor_event_callback = cb;
+}
+
 void motor_timeout()
 {
     MotorStatusMapping[MotorRunning] = MOTOR_TIMEOUT;
@@ -43,9 +48,15 @@ void setup_motor_interrupt()
     //TIMER_0_set_timeout(0x1000);
 }
 
+static void event_cb(MotorEvent e)
+{
+    RDY_set_level(true);
+}
+
 void init_motor_controller()
 {
     setup_motor_interrupt();
+    set_motor_event_callback(event_cb);
 }
 
 static void start_motor_timer()

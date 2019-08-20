@@ -166,7 +166,13 @@ static void i2c_read_handler()
         case I2C_REG_RS_D:
         case I2C_REG_RS_E:
         case I2C_REG_RS_F:
-        I2C_SLAVE_write(r_prs(_currentRegister - 0x10));
+        {
+            uint8_t prs = r_prs(_currentRegister - 0x10);
+            I2C_SLAVE_write(prs);
+            if (prs) {
+                RDY_set_level(false);
+            }
+        }
         break;
         
         case I2C_REG_RSS:
