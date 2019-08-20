@@ -19,6 +19,15 @@ typedef void (*motor_event_callback_t)(MotorEvent);
 
 static motor_event_callback_t motor_event_callback;
 
+static void motor_event(MotorStatus s) 
+{
+    RDY_set_level(true);
+    
+    if (motor_event_callback) {
+        motor_event_callback(s);
+    }
+}
+
 static void setup_motor_feedback_interrupt()
 {
     MFB_set_change_callback(process_port_mfb_interrupt);
@@ -33,9 +42,7 @@ void motor_timeout()
 {
     MotorStatusMapping[MotorRunning] = MOTOR_TIMEOUT;
     disable_motor();
-    if (motor_event_callback) {
-        motor_event_callback(MOTOR_EVENT_COMPLETE_TIMEOUT);
-    }
+    motor_event(MOTOR_EVENT_COMPLETE_TIMEOUT);
 }
 
 void setup_motor_interrupt()
@@ -48,15 +55,9 @@ void setup_motor_interrupt()
     //TIMER_0_set_timeout(0x1000);
 }
 
-static void event_cb(MotorEvent e)
-{
-    RDY_set_level(true);
-}
-
 void init_motor_controller()
 {
     setup_motor_interrupt();
-    set_motor_event_callback(event_cb);
 }
 
 static void start_motor_timer()
@@ -110,9 +111,7 @@ void process_port_mfb_interrupt()
     if (motor_feedback_enabled) {	// when motor enabled
         MotorStatusMapping[MotorRunning] = MOTOR_OK;
         disable_motor();
-        if (motor_event_callback) {
-            motor_event_callback(MOTOR_EVENT_COMPLETE_OK);
-        }
+        motor_event(MOTOR_EVENT_COMPLETE_OK);
     }
 }
 
